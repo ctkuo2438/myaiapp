@@ -1,0 +1,4 @@
+Pillow==10.2.0
+timm==1.0.7
+imagenet-stubs @ git+https://github.com/nottombrown/imagenet-stubs.git@master
+six
