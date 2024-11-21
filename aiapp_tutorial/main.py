@@ -20,12 +20,16 @@ print(f"Model Loaded Successfully on {device}")
 data_config = timm.data.resolve_model_data_config(model)
 transforms = timm.data.create_transform(**data_config, is_training=False)
 
+# Prepare the input tensor and move it to the same device as the model
+input_tensor = transforms(img).unsqueeze(0).to(device) # unsqueeze single image into batch of 1
+
 with torch.no_grad():
-    output = model(transforms(img).unsqueeze(0))  # unsqueeze single image into batch of 1
+    output = model(input_tensor)
+
 top5_probabilities, top5_class_indices = torch.topk(output.softmax(dim=1), k=5) 
 # batch_size = 1
-top5_class_indices = top5_class_indices.numpy().tolist()[0]
-top5_probabilities = top5_probabilities.numpy().tolist()[0]
+top5_class_indices = top5_class_indices.cpu().numpy().tolist()[0]
+top5_probabilities = top5_probabilities.cpu().numpy().tolist()[0]
 
 for idx, prob in zip(top5_class_indices, top5_probabilities):
     print(label_to_name(idx), prob)
